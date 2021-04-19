@@ -1,5 +1,7 @@
 from urllib.parse import unquote
 
+import bbcode
+
 # this list determines the order in which the tiers will be displayed
 tier_files = [
     "S_tier.txt",
@@ -43,5 +45,13 @@ with open(output_file, "w") as output:
         except FileNotFoundError:
             print(f"[!][{i}/{len(tier_files)}] File {tier_file} not found! "
                   "No BBCode was generated.")
+
+with open(output_file, "r") as f:
+    file_data = f.read()
+    with open("preview.html", "w") as f2:
+        parser = bbcode.Parser(replace_links=False)
+        parser.add_simple_formatter('img', '<img src=%(value)s>')
+        html = parser.format(file_data)
+        f2.write(html)
 
 print(f"Generated BBCode is in file {output_file}")

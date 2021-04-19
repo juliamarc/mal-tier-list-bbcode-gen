@@ -6,14 +6,13 @@
 
 This script generates BBCode for a tier list with images of your favorite characters.
 The resulting images contain links to the respective characters' MAL pages.
+The headers are also images, so it's fully customizable.
 
 There are 7 tiers by default.
-The script is very short and simple, so you can modify it to your liking.
-
 
 ## Prequisites
-* Python 3
-* GIMP
+* Python 3 to run the script
+* GIMP, or any other editing software that can crop and resize images
 
 ## How to use
 
@@ -21,11 +20,8 @@ The script is very short and simple, so you can modify it to your liking.
 This can be done manually through GitHub's UI, or with `git clone`.
 
 ### Prepare the images
-Unfortunately, the script doesn't resize or deal with hosting the images.
 
 #### Image size
-The images need to be properly formatted before they are used.
-For this, I recommend using GIMP.
 Rrecommendations for the formatting of the images:
 
 * All header images should be be the same size, e.g. 1000x30
@@ -40,6 +36,7 @@ To host the images I use https://postimages.org/.
 Remember to use **direct links** to the images.
 They should end with the original file's extension, e.g. `.png`.
 Otherwise they will get resized and things will break.
+
 Recommended settings when uploading:
 
 <p align="center">
@@ -74,8 +71,8 @@ Run the following command from the terminal:
 python favgen.py
 ```
 
-This should generate a file `favbbcode.txt`.
+This should generate the file `favbbcode.txt`.
 It contains the generated BBCode.
 
-### Using the generated BBCode
+### Use the generated BBCode
 Paste the BBCode into a blog post on MAL.
