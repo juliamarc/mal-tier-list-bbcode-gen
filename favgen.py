@@ -18,8 +18,8 @@ class Header:
         if self.image_source == 'direct URL':
             return f'[img]{self.image}[/img]'
         else:
-            raise NotImplementedError(
-                "Currently 'direct URL' is the only method of providing images")
+            raise NotImplementedError("Currently 'direct URL' is the only "
+                                      "method of providing images")
 
 
 class Character:
@@ -36,8 +36,8 @@ class Character:
         if self.image_source == 'direct URL':
             return f'[url={self.mal_url}][img]{self.image}[/img][/url]'
         else:
-            raise NotImplementedError(
-                "Currently 'direct URL' is the only method of providing images")
+            raise NotImplementedError("Currently 'direct URL' is the only "
+                                      "method of providing images")
 
 
 class SpreadsheetParser:
@@ -46,7 +46,6 @@ class SpreadsheetParser:
         self.spreadsheet = ezodf.opendoc(file_name)
         self.settings = self._parse_settings()
         self.tiers = None
-
 
     def _parse_settings(self):
         settings = {}
@@ -63,14 +62,14 @@ class SpreadsheetParser:
 
         missing = set(tier_names) - set(self.spreadsheet.sheets.names())
         if missing:
-            print(f"WARNING the following tiers were specified in SETTINGS but do "
-                  f"not match any sheet in the spreadsheet: {list(missing)}")
+            print(f"WARNING the following tiers were specified in SETTINGS "
+                  f"but do not match any sheet in the spreadsheet: "
+                  f"{list(missing)}")
 
         settings['tier_names'] = [t for t in tier_names if t not in missing]
         settings['characters_per_row'] = int(sheet['G2'].value)
 
         return settings
-
 
     def parse_tiers(self):
         tiers = defaultdict(dict)
@@ -103,13 +102,13 @@ class BBCodeGenerator:
             no_characters = len(tier['characters'])
             if tier['header'].include:
                 self.bbcode += tier['header'].get_bbcode() + '\n'
-            
+
             per_row = self.ss_parser.settings['characters_per_row']
             force_tile = True if per_row > 0 else False
             if force_tile:
                 newline_after = range(
                     per_row-1, no_characters-1, per_row)
-    
+
             for i, character in enumerate(tier['characters']):
                 self.bbcode += character.get_bbcode()
                 if force_tile and i in newline_after:
@@ -118,13 +117,11 @@ class BBCodeGenerator:
             if no_characters > 0:
                 self.bbcode += '\n'
 
-
     def write_bbcode_to_file(self, file_name):
         with open(file_name, "w") as f:
             f.write(self.bbcode)
 
         print(f"BBCode written to {file_name}")
-
 
     def write_html_preview_to_file(self, file_name):
         parser = bbcode.Parser(replace_links=False)
