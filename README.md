@@ -8,71 +8,15 @@ This script generates BBCode for a tier list with images of your favorite charac
 The resulting images contain links to the respective characters' MAL pages.
 The headers are also images, so it's fully customizable.
 
-There are 7 tiers by default.
 
 ## Prequisites
 * Python 3 to run the script
-* GIMP, or any other editing software that can crop and resize images
+* GIMP, or any other editing software for cropping and resizing images
 
 ## How to use
 
-### Download repository
-This can be done manually through GitHub's UI, or with `git clone`.
+TODO
 
-### Prepare the images
+## TODO
 
-#### Image size
-Rrecommendations for the formatting of the images:
-
-* All header images should be be the same size, e.g. 1000x30
-* All character images should be the same size, e.g. 250x250
-* The width of the header should be divisible by the width of the character, e.g. if the banner width is 1000, then the suggested character width would be 250, 200, etc. so that it tiles nicely
-
-In the `img` folder I provided some blank header images for all tiers.
-You can create your own by importing the `mal_tiers_slim.xcf` file into GIMP and adding text, etc.
-
-#### Image hosting
-To host the images I use https://postimages.org/.
-Remember to use **direct links** to the images.
-They should end with the original file's extension, e.g. `.png`.
-Otherwise they will get resized and things will break.
-
-Recommended settings when uploading:
-
-<p align="center">
-  <img src="img/postimage_options.png" />
-</p>
-
-### Fill out the `*_tier.txt` files
-
-By default, the script is expecting files named `S_tier.txt`, `A_tier.txt`, `B_tier.txt`, ... , `F_tier.txt`.
-These are the files where the links to images and MAL pages should be placed.
-
-The `*_tier.txt` files should follow this pattern:
-
-Line | Description |
---- | --- |
-1 | direct link to header image for the tier |
-2 - *n* | direct link to character image and link to character's MAL page, in CSV format |
-
-Example `S_tier.txt`:
-
-```
-https://i.postimg.cc/2SpmrDht/S-tier-numbered.png
-https://i.postimg.cc/1X0SjyJm/zeke.png,https://myanimelist.net/character/142314/Zeke
-https://i.postimg.cc/hj96KMr8/gojo-eye.png,https://myanimelist.net/character/164471/Satoru_Gojou
-```
-
-### Run the script
-
-Run the following command from the terminal:
-
-```
-python favgen.py
-```
-
-This should generate the file `favbbcode.txt`.
-It contains the generated BBCode.
-
-### Use the generated BBCode
-Paste the BBCode into a blog post on MAL.
+* research other image hosting options
