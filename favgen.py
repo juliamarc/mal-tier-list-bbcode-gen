@@ -1,46 +1,67 @@
-from urllib.parse import unquote
+import re
+
 from collections import defaultdict
+from math import isclose
+from urllib.parse import unquote
 
 import bbcode
 import ezodf
 
 
-class Header:
-    def __init__(self, include, image_source, image):
+class Image:
+    SOURCES = ['direct URL', 'Google Drive']
+
+    def _process_image_url(self):
+        if self.image_source == 'direct URL':
+            pass
+        elif self.image_source == 'Google Drive':
+            file_id = re.search(r'([-\w]{25,})', self.image_url).group(1)
+            self.image_url = f'https://drive.google.com/uc?id={file_id}'
+        else:
+            msg = f"'{self.image_source}' is not a valid image source. " + \
+                  f"Choose from {self.SOURCES}."
+            raise KeyError(msg)
+
+
+class Header(Image):
+    def __init__(self, include, image_source, image_url):
         self.include = True if include == 'yes' else False
         self.image_source = image_source
-        self.image = image
+        self.image_url = image_url
+
+        self._process_image_url()
 
     def __repr__(self):
         return str(self.include)
 
     def get_bbcode(self):
-        if self.image_source == 'direct URL':
-            return f'[img]{self.image}[/img]'
-        else:
-            raise NotImplementedError("Currently 'direct URL' is the only "
-                                      "method of providing images")
+        return f'[img]{self.image_url}[/img]'
 
 
-class Character:
-    def __init__(self, mal_url, image_source, image):
+class Character(Image):
+    def __init__(self, mal_url, image_source, image_url):
         self.mal_url = mal_url
+        self.name = unquote(self.mal_url.split("/")[-1]).replace("_", " ")
         self.image_source = image_source
-        self.image = image
-        self.name = unquote(mal_url.split("/")[-1]).replace("_", " ")
+        self.image_url = image_url
+
+        self._process_image_url()
 
     def __repr__(self):
         return self.name
 
     def get_bbcode(self):
-        if self.image_source == 'direct URL':
-            return f'[url={self.mal_url}][img]{self.image}[/img][/url]'
-        else:
-            raise NotImplementedError("Currently 'direct URL' is the only "
-                                      "method of providing images")
+        return f'[url={self.mal_url}][img]{self.image_url}[/img][/url]'
 
 
 class SpreadsheetParser:
+    SETTINGS_SHEET_NAME = 'SETTINGS'
+    CHARACTERS_PER_ROW_ADDRESS = 'E2'
+    TIER_LIST_ROW_START = 2
+    TIER_LIST_ROW_END = 16
+    CHAR_LIST_ROW_START = 5
+    CHAR_LIST_ROW_END = 54
+
     def __init__(self, file_name):
         self.file_name = file_name
         self.spreadsheet = ezodf.opendoc(file_name)
@@ -50,24 +71,30 @@ class SpreadsheetParser:
     def _parse_settings(self):
         settings = {}
         try:
-            sheet = self.spreadsheet.sheets["SETTINGS"]
+            sheet = self.spreadsheet.sheets[self.SETTINGS_SHEET_NAME]
         except KeyError:
-            raise KeyError("Sheet 'SETTINGS' not found in spreadsheet.")
+            raise KeyError(
+                f"Sheet {self.SETTINGS_SHEET_NAME} not found in spreadsheet.")
 
         tier_names = []
-        for i in range(1, 16):
+        for i in range(self.TIER_LIST_ROW_START-1, self.TIER_LIST_ROW_END):
             val = sheet.row(i)[0].value
             if val is not None:
-                tier_names.append(val)
+                if isinstance(val, float) and isclose(val, int(val)):
+                    val = int(val)
+                tier_names.append(str(val))
+
+        tier_names = list(dict.fromkeys(tier_names))
 
         missing = set(tier_names) - set(self.spreadsheet.sheets.names())
         if missing:
             print(f"WARNING the following tiers were specified in SETTINGS "
                   f"but do not match any sheet in the spreadsheet: "
-                  f"{list(missing)}")
+                  f"{', '.join(missing)}")
 
         settings['tier_names'] = [t for t in tier_names if t not in missing]
-        settings['characters_per_row'] = int(sheet['G2'].value)
+        settings['characters_per_row'] = int(
+            sheet[self.CHARACTERS_PER_ROW_ADDRESS].value)
 
         return settings
 
@@ -81,10 +108,14 @@ class SpreadsheetParser:
             tiers[tier]['header'] = Header(*header_entry)
 
             characters = []
-            for i in range(4, 54):
+            for i in range(self.CHAR_LIST_ROW_START-1, self.CHAR_LIST_ROW_END):
                 character_entry = [cell.value for cell in sheet.row(i)[1:4]]
                 if all(character_entry):
                     characters.append(Character(*character_entry))
+                elif any(character_entry):
+                    print(f"WARNING Incomplete character entry in sheet "
+                          f"'{tier}' at row {i+1}")
+
             tiers[tier]['characters'] = characters
 
         self.tiers = dict(tiers)
@@ -100,6 +131,7 @@ class BBCodeGenerator:
 
         for _, tier in self.ss_parser.tiers.items():
             no_characters = len(tier['characters'])
+
             if tier['header'].include:
                 self.bbcode += tier['header'].get_bbcode() + '\n'
 
@@ -121,7 +153,7 @@ class BBCodeGenerator:
         with open(file_name, "w") as f:
             f.write(self.bbcode)
 
-        print(f"BBCode written to {file_name}")
+        print(f"BBCode saved to {file_name}")
 
     def write_html_preview_to_file(self, file_name):
         parser = bbcode.Parser(replace_links=False)
@@ -130,12 +162,13 @@ class BBCodeGenerator:
         with open(file_name, "w") as f:
             f.write(html)
 
-        print(f'HTML preview written to {file_name}')
+        print(f'HTML preview saved to {file_name}')
 
 
 def main():
     parser = SpreadsheetParser("tiers.ods")
     parser.parse_tiers()
+
     generator = BBCodeGenerator(parser)
     generator.generate_bbcode()
     generator.write_html_preview_to_file('preview.html')
