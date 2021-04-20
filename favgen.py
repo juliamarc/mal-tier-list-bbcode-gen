@@ -1,5 +1,6 @@
 import re
 
+from abc import ABC, abstractmethod
 from collections import defaultdict
 from math import isclose
 from urllib.parse import unquote
@@ -8,7 +9,7 @@ import bbcode
 import ezodf
 
 
-class Image:
+class Image(ABC):
     SOURCES = ['direct URL', 'Google Drive']
 
     def _process_image_url(self):
@@ -21,6 +22,10 @@ class Image:
             msg = f"'{self.image_source}' is not a valid image source. " + \
                   f"Choose from {self.SOURCES}."
             raise KeyError(msg)
+
+    @abstractmethod
+    def get_bbcode(self):
+        raise NotImplementedError
 
 
 class Header(Image):
