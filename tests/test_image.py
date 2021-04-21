@@ -1,6 +1,6 @@
 import pytest
 
-from mal_fav_bbcode_gen.image import Image
+from mal_fav_bbcode_gen.image import Image, GoogleDriveSourceError
 
 
 def test_source_direct_url():
@@ -27,6 +27,12 @@ def test_source_google_drive_share_link():
     image = Image('Google Drive', image_url)
 
     assert image.image_url == expected_url
+
+
+def test_source_google_no_file_id():
+    image_url = ('https://drive.google.com/file/d/view?usp=sharing')
+    with pytest.raises(GoogleDriveSourceError):
+        Image('Google Drive', image_url)
 
 
 def test_source_not_valid():
