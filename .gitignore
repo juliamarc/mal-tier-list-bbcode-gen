@@ -3,3 +3,5 @@ venv
 .~lock.*
 *.html
 *.bbcode.txt
+*.egg-info
+.coverage
