@@ -1,6 +1,5 @@
 import re
 
-from abc import ABC, abstractmethod
 from collections import defaultdict
 from math import isclose
 from urllib.parse import unquote
@@ -9,8 +8,13 @@ import bbcode
 import ezodf
 
 
-class Image(ABC):
+class Image:
     SOURCES = ['direct URL', 'Google Drive']
+
+    def __init__(self, image_source, image_url):
+        self.image_source = image_source
+        self.image_url = image_url
+        self._process_image_url()
 
     def _process_image_url(self):
         if self.image_source == 'direct URL':
@@ -23,34 +27,24 @@ class Image(ABC):
                   f"Choose from {self.SOURCES}."
             raise KeyError(msg)
 
-    @abstractmethod
-    def get_bbcode(self):
-        raise NotImplementedError
-
-
-class Header(Image):
-    def __init__(self, include, image_source, image_url):
-        self.include = True if include == 'yes' else False
-        self.image_source = image_source
-        self.image_url = image_url
-
-        self._process_image_url()
-
-    def __repr__(self):
-        return str(self.include)
-
     def get_bbcode(self):
         return f'[img]{self.image_url}[/img]'
 
 
+class Header(Image):
+    def __init__(self, include, image_source, image_url):
+        super(Header, self).__init__(image_source, image_url)
+        self.include = True if include == 'yes' else False
+
+    def __repr__(self):
+        return str(self.include)
+
+
 class Character(Image):
     def __init__(self, mal_url, image_source, image_url):
+        super(Character, self).__init__(image_source, image_url)
         self.mal_url = mal_url
         self.name = unquote(self.mal_url.split("/")[-1]).replace("_", " ")
-        self.image_source = image_source
-        self.image_url = image_url
-
-        self._process_image_url()
 
     def __repr__(self):
         return self.name
