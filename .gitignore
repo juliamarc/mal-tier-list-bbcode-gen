@@ -5,3 +5,4 @@ venv
 *.bbcode.txt
 *.egg-info
 .coverage
+.tox
