@@ -1,0 +1,32 @@
+name: mal-fav-bbcode-gen
+
+on: [push, pull_request]
+
+jobs:
+  test-mal-fav-bbcode-gen:
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.7", "3.8", "3.9"]
+
+    env:
+      TOXENV: ${{matrix.python}}
+
+    steps:
+      - name: Set up repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{matrix.python}}
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run tests
+        run: |
+          pip install tox
+          tox
