@@ -1,0 +1,13 @@
+[run]
+branch = True
+source = mal_fav_bbcode_gen
+
+[report]
+ignore_errors = True
+exclude_lines =
+    pragma: no cover
+    def __repr__
+omit =
+    mal_fav_bbcode_gen/cli.py
+    mal_fav_bbcode_gen/__main__.py
+    tests/*

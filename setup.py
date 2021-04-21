@@ -3,7 +3,7 @@ import setuptools
 
 entry_points = {
     'console_scripts': [
-        'mal_fav_bbcode_gen = mal_fav_bbcode_gen.cli:main',
+        'mal-fav-bbcode-gen = mal_fav_bbcode_gen.cli:main',
     ]
 }
 

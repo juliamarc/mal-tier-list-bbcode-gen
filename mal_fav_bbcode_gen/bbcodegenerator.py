@@ -12,7 +12,7 @@ class BBCodeGenerator:
         for _, tier in self.ss_parser.tiers.items():
             no_characters = len(tier['characters'])
 
-            if tier['header'].include:
+            if tier['header']:
                 self.bbcode += tier['header'].get_bbcode() + '\n'
 
             per_row = self.ss_parser.settings['characters_per_row']
@@ -35,10 +35,14 @@ class BBCodeGenerator:
 
         print(f"BBCode saved to {file_name}")
 
-    def write_html_preview_to_file(self, file_name):
+    def _generate_html_preview(self):
         parser = bbcode.Parser(replace_links=False)
         parser.add_simple_formatter('img', '<img src=%(value)s>')
-        html = parser.format(self.bbcode)
+
+        return parser.format(self.bbcode)
+
+    def write_html_preview_to_file(self, file_name):
+        html = self._generate_html_preview()
         with open(file_name, "w") as f:
             f.write(html)
 
