@@ -19,7 +19,7 @@ def main(preview, output_path, ods_file_path):
     parser = SpreadsheetParser(ods_file_path)
     parser.parse_tiers()
 
-    generator = BBCodeGenerator(parser)
+    generator = BBCodeGenerator(parser.settings, parser.tiers)
     generator.generate_bbcode()
     if preview:
         generator.write_html_preview_to_file('preview.html')

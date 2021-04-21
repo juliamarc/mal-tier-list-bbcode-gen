@@ -2,20 +2,21 @@ import bbcode
 
 
 class BBCodeGenerator:
-    def __init__(self, ss_parser):
-        self.ss_parser = ss_parser
+    def __init__(self, settings, tiers):
+        self.settings = settings
+        self.tiers = tiers
         self.bbcode = None
 
     def generate_bbcode(self):
         self.bbcode = ''
 
-        for _, tier in self.ss_parser.tiers.items():
+        for _, tier in self.tiers.items():
             no_characters = len(tier['characters'])
 
             if tier['header']:
                 self.bbcode += tier['header'].get_bbcode() + '\n'
 
-            per_row = self.ss_parser.settings['characters_per_row']
+            per_row = self.settings['characters_per_row']
             force_tile = True if per_row > 0 else False
             if force_tile:
                 newline_after = range(
@@ -29,7 +30,7 @@ class BBCodeGenerator:
             if no_characters > 0:
                 self.bbcode += '\n'
 
-    def write_bbcode_to_file(self, file_name):
+    def write_bbcode_to_file(self, file_name):  # pragma: no cover
         with open(file_name, "w") as f:
             f.write(self.bbcode)
 
@@ -41,7 +42,7 @@ class BBCodeGenerator:
 
         return parser.format(self.bbcode)
 
-    def write_html_preview_to_file(self, file_name):
+    def write_html_preview_to_file(self, file_name):  # pragma: no cover
         html = self._generate_html_preview()
         with open(file_name, "w") as f:
             f.write(html)
