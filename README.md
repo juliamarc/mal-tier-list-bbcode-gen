@@ -1,22 +1,16 @@
 # MAL Favorites BBCode Generator
 
-<p align="center">
-  <img src="img/tier_list_blog.png" />
-</p>
+![Tests](https://github.com/juliamarc/ mal-fav-bbcode-gen/actions/workflows/ mal-fav-bbcode-gen.yml/badge.svg)
 
-This script generates BBCode for a tier list with images of your favorite characters.
+This package generates BBCode for a tier list with images of one's favorite anime characters.
 The resulting images contain links to the respective characters' MAL pages.
-The headers are also images, so it's fully customizable.
+The tier headers are also images, so it's fully customizable.
 
 
 ## Prequisites
-* Python 3 to run the script
+* Python 3
 * GIMP, or any other editing software for cropping and resizing images
 
 ## How to use
 
 TODO
-
-## TODO
-
-* research other image hosting options
