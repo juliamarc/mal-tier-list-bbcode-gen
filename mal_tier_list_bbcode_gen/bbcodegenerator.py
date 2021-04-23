@@ -11,23 +11,23 @@ class BBCodeGenerator:
         self.bbcode = ''
 
         for _, tier in self.tiers.items():
-            no_characters = len(tier['characters'])
+            no_entries = len(tier['entries'])
 
             if tier['header']:
                 self.bbcode += tier['header'].get_bbcode() + '\n'
 
-            per_row = self.settings['characters_per_row']
+            per_row = self.settings['entries_per_row']
             force_tile = True if per_row > 0 else False
             if force_tile:
                 newline_after = range(
-                    per_row-1, no_characters-1, per_row)
+                    per_row-1, no_entries-1, per_row)
 
-            for i, character in enumerate(tier['characters']):
-                self.bbcode += character.get_bbcode()
+            for i, entry in enumerate(tier['entries']):
+                self.bbcode += entry.get_bbcode()
                 if force_tile and i in newline_after:
                     self.bbcode += '\n'
 
-            if no_characters > 0:
+            if no_entries > 0:
                 self.bbcode += '\n'
 
     def write_bbcode_to_file(self, file_name):  # pragma: no cover

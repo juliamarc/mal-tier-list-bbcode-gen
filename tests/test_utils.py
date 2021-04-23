@@ -1,4 +1,4 @@
-from mal_fav_bbcode_gen import utils
+from mal_tier_list_bbcode_gen import utils
 
 
 def test_dedup_list_with_dups():

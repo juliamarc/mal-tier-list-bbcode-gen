@@ -1,4 +1,4 @@
-name: mal-fav-bbcode-gen
+name: mal-tier-list-bbcode-gen
 
 on: [push, pull_request]
 

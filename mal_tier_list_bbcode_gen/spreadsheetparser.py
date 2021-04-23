@@ -2,10 +2,10 @@ from math import isclose
 
 import ezodf
 
-import mal_fav_bbcode_gen.utils as utils
+import mal_tier_list_bbcode_gen.utils as utils
 
-from mal_fav_bbcode_gen.character import Character
-from mal_fav_bbcode_gen.image import Image
+from mal_tier_list_bbcode_gen.entry import Entry
+from mal_tier_list_bbcode_gen.image import Image
 
 
 class HeaderIncompleteError(Exception):  # pragma: no cover
@@ -13,18 +13,18 @@ class HeaderIncompleteError(Exception):  # pragma: no cover
         super().__init__(message)
 
 
-class CharactersPerRowMissingError(Exception):  # pragma: no cover
+class EntriesPerRowMissingError(Exception):  # pragma: no cover
     def __init__(self, message):
         super().__init__(message)
 
 
 class SpreadsheetParser:
     SETTINGS_SHEET_NAME = 'SETTINGS'
-    CHARACTERS_PER_ROW_ADDRESS = 'E2'
-    TIER_LIST_ROW_START = 2
-    TIER_LIST_ROW_END = 16
-    CHAR_LIST_ROW_START = 5
-    CHAR_LIST_ROW_END = 54
+    ENTRIES_PER_ROW_ADDRESS = 'E2'
+    TIER_ORDER_ROW_START = 2
+    TIER_ORDER_ROW_END = 16
+    ENTRY_LIST_ROW_START = 5
+    ENTRY_LIST_ROW_END = 54
 
     def __init__(self, file_name):
         self.file_name = file_name
@@ -39,10 +39,10 @@ class SpreadsheetParser:
             raise KeyError(
                 f"Sheet {self.SETTINGS_SHEET_NAME} not found in spreadsheet.")
 
-    def _parse_tier_list(self, sheet):
+    def _parse_tier_order(self, sheet):
         tier_names = []
 
-        for i in range(self.TIER_LIST_ROW_START-1, self.TIER_LIST_ROW_END):
+        for i in range(self.TIER_ORDER_ROW_START-1, self.TIER_ORDER_ROW_END):
             val = sheet.row(i)[0].value
             if val is not None:
                 if isinstance(val, float) and isclose(val, int(val)):
@@ -65,23 +65,23 @@ class SpreadsheetParser:
     def _filter_tier_names(self, tier_names, missing):
         return [t for t in tier_names if t not in missing]
 
-    def _get_chars_per_row_setting(self, sheet):
+    def _get_entries_per_row_setting(self, sheet):
         try:
-            return int(sheet[self.CHARACTERS_PER_ROW_ADDRESS].value)
+            return int(sheet[self.ENTRIES_PER_ROW_ADDRESS].value)
         except TypeError:
-            raise CharactersPerRowMissingError(
-                f"'Characters per row' setting missing from settings sheet "
+            raise EntriesPerRowMissingError(
+                f"'Entries per row' setting missing from settings sheet "
                 f"{self.SETTINGS_SHEET_NAME}. Should be in cell "
-                f"{self.CHARACTERS_PER_ROW_ADDRESS}")
+                f"{self.ENTRIES_PER_ROW_ADDRESS}")
 
     def _parse_settings(self):
         settings = {}
         sheet = self._get_settings_sheet()
-        tier_names = self._parse_tier_list(sheet)
+        tier_names = self._parse_tier_order(sheet)
         missing = self._check_for_missing_tier_sheets(tier_names)
 
         settings['tier_names'] = self._filter_tier_names(tier_names, missing)
-        settings['characters_per_row'] = self._get_chars_per_row_setting(sheet)
+        settings['entries_per_row'] = self._get_entries_per_row_setting(sheet)
 
         return settings
 
@@ -98,33 +98,33 @@ class SpreadsheetParser:
         else:
             return None
 
-    def _parse_character(self, sheet_row, row_number, tier_name):
-        character_entry = [cell.value for cell in sheet_row[1:4]]
+    def _parse_entry(self, sheet_row, row_number, tier_name):
+        entry = [cell.value for cell in sheet_row[1:4]]
 
-        if all(character_entry):
-            return Character(*character_entry)
-        elif any(character_entry):
-            print(f"WARNING Incomplete character entry in sheet "
-                  f"'{tier_name}' at row {row_number}")
+        if all(entry):
+            return Entry(*entry)
+        elif any(entry):
+            print(f"WARNING Incomplete entry in sheet '{tier_name}' at row "
+                  f"{row_number}")
 
             return None
 
-    def _parse_characters(self, sheet, tier_name):
-        characters = []
+    def _parse_entries(self, sheet, tier_name):
+        entries = []
 
-        for i in range(self.CHAR_LIST_ROW_START-1, self.CHAR_LIST_ROW_END):
-            character = self._parse_character(sheet.row(i), i, tier_name)
-            if character:
-                characters.append(character)
+        for i in range(self.ENTRY_LIST_ROW_START-1, self.ENTRY_LIST_ROW_END):
+            entry = self._parse_entry(sheet.row(i), i, tier_name)
+            if entry:
+                entries.append(entry)
 
-        return characters
+        return entries
 
     def _parse_tier(self, tier_name):
         sheet = self.spreadsheet.sheets[tier_name]
         header = self._parse_header(sheet, tier_name)
-        characters = self._parse_characters(sheet, tier_name)
+        entries = self._parse_entries(sheet, tier_name)
 
-        return {'header': header, 'characters': characters}
+        return {'header': header, 'entries': entries}
 
     def parse_tiers(self):
         for tier_name in self.settings['tier_names']:

@@ -2,8 +2,8 @@ from os.path import basename, splitext
 
 import click
 
-from mal_fav_bbcode_gen.bbcodegenerator import BBCodeGenerator
-from mal_fav_bbcode_gen.spreadsheetparser import SpreadsheetParser
+from mal_tier_list_bbcode_gen.bbcodegenerator import BBCodeGenerator
+from mal_tier_list_bbcode_gen.spreadsheetparser import SpreadsheetParser
 
 
 @click.command()

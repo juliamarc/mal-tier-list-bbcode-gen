@@ -1,6 +1,6 @@
 import pytest
 
-from mal_fav_bbcode_gen.image import Image, GoogleDriveSourceError
+from mal_tier_list_bbcode_gen.image import Image, GoogleDriveSourceError
 
 
 def test_source_direct_url():

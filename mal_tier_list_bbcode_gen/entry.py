@@ -1,11 +1,11 @@
 from urllib.parse import unquote
 
-from mal_fav_bbcode_gen.image import Image
+from mal_tier_list_bbcode_gen.image import Image
 
 
-class Character(Image):
+class Entry(Image):
     def __init__(self, mal_url, image_source, image_url):
-        super(Character, self).__init__(image_source, image_url)
+        super(Entry, self).__init__(image_source, image_url)
         self.mal_url = mal_url
         self.name = unquote(self.mal_url.split("/")[-1]).replace("_", " ")
 
