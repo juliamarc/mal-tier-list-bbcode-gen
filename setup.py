@@ -9,7 +9,7 @@ entry_points = {
 
 setuptools.setup(
     name='mal-tier-list-bbcode-gen',
-    version='0.1',
+    version='2021.4.24',
     packages=setuptools.find_packages(),
     include_package_data=True,
     description='BBCode generator for MyAnimeList blog posts',
