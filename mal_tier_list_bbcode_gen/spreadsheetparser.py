@@ -8,12 +8,17 @@ from mal_tier_list_bbcode_gen.entry import Entry
 from mal_tier_list_bbcode_gen.image import Image
 
 
-class HeaderIncompleteError(Exception):  # pragma: no cover
+class EntriesPerRowMissingError(Exception):  # pragma: no cover
     def __init__(self, message):
         super().__init__(message)
 
 
-class EntriesPerRowMissingError(Exception):  # pragma: no cover
+class EntriesPerRowNotANumberError(Exception):  # pragma: no cover
+    def __init__(self, message):
+        super().__init__(message)
+
+
+class HeaderIncompleteError(Exception):  # pragma: no cover
     def __init__(self, message):
         super().__init__(message)
 
@@ -62,17 +67,25 @@ class SpreadsheetParser:
 
         return missing
 
-    def _filter_tier_names(self, tier_names, missing):
-        return [t for t in tier_names if t not in missing]
-
     def _get_entries_per_row_setting(self, sheet):
-        try:
-            return int(sheet[self.ENTRIES_PER_ROW_ADDRESS].value)
-        except TypeError:
+        entries_per_row = sheet[self.ENTRIES_PER_ROW_ADDRESS].value
+        if entries_per_row is None:
             raise EntriesPerRowMissingError(
                 f"'Entries per row' setting missing from settings sheet "
                 f"{self.SETTINGS_SHEET_NAME}. Should be in cell "
                 f"{self.ENTRIES_PER_ROW_ADDRESS}")
+        elif isinstance(entries_per_row, float):
+            entries_per_row = int(entries_per_row)
+            if entries_per_row >= 0:
+                return entries_per_row
+            else:
+                print("WARNING 'Entries per row' setting set to less than 0."
+                      "Defaulting to 0 (free flow tiling).")
+                return 0
+        else:
+            raise EntriesPerRowNotANumberError(
+                f"'Entries per row' setting from sheet "
+                f"{self.SETTINGS_SHEET_NAME} should be a number.")
 
     def _parse_settings(self):
         settings = {}
@@ -80,7 +93,7 @@ class SpreadsheetParser:
         tier_names = self._parse_tier_order(sheet)
         missing = self._check_for_missing_tier_sheets(tier_names)
 
-        settings['tier_names'] = self._filter_tier_names(tier_names, missing)
+        settings['tier_names'] = utils.filter_list_by_set(tier_names, missing)
         settings['entries_per_row'] = self._get_entries_per_row_setting(sheet)
 
         return settings
