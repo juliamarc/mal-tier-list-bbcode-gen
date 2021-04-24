@@ -1,8 +1,9 @@
 # MAL Tier List BBCode Generator
 
-![workflow](https://github.com/juliamarc/mal-tier-list-bbcode-gen/actions/workflows/mal-tier-list-bbcode-gen.yaml/badge.svg)
+![](https://github.com/juliamarc/mal-tier-list-bbcode-gen/actions/workflows/mal-tier-list-bbcode-gen.yaml/badge.svg)
 
-`mal-tier-list-bbcode-gen` generates BBCode for tier lists with custom images corresponding to entries in MAL (characters, anime, manga, people).
+`mal-tier-list-bbcode-gen` is a Python package that generates BBCode for
+tier lists with custom images corresponding to entries in MAL (characters, anime, manga, people).
 Each image is also a link to the respective entry's MAL page.
 
 [Example character tier list](https://myanimelist.net/blog.php?eid=844887)
@@ -15,21 +16,24 @@ or
 ```
 git clone https://github.com/juliamarc/mal-tier-list-bbcode-gen
 cd mal-tier-list-bbcode-gen
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
 ```
+For Windows use `venv\Scripts\activate.bat` or `venv\Scripts\activate.ps1` to activate the virtual environment.
 
 ## User guide
-
 ### Tiers
-Each tier is represented by one sheet of the `tiers.ods` spreadsheet.
+Each tier is represented by one sheet of the [`tiers.ods` spreadsheet](https://github.com/juliamarc/mal-tier-list-bbcode-gen/raw/main/tiers.ods).
 By default there are 7 tiers named 'tier S', 'tier A', 'tier B' ..., 'tier F'.
-I provided an example tier in the sheet named `EXAMPLE TIER`.
+I provided an example filled out tier in the sheet named `EXAMPLE TIER`.
 
 ### Headers
 Each tier has a header.
 The headers are images.
 I provided a default header for each tier in `tiers.ods` (color-coded in the typical tier list style).
 
-The example headers and the `.xcf` file (GIMP format) that was used to generate them can be found in `example-headers`.
+Some example headers and the `.xcf` file (GIMP format) that was used to generate them can be found in `example-headers`.
 
 ### Entries
 Each entry consists of a link to MAL and a link to an image.
@@ -57,10 +61,10 @@ Curretnly there are two settings:
 
 ## Usage
 
-You can edit the `tiers.ods` file directly or create a copy of it.
+You can edit the [`tiers.ods` spreadsheet](https://github.com/juliamarc/mal-tier-list-bbcode-gen/raw/main/tiers.ods) directly or create a copy of it.
 I will show an example for `tiers.ods` here, but if your file is named differently replace `tiers` with your file's name.
 
-1. Fill out the `tiers.ods` file
+1. Fill out `tiers.ods`
 2. Run
     - `mal-tier-list-bbcode-gen tiers.ods` if you installed with pip
     - `python -m mal_tier_list_bbcode_gen tiers.ods` if you used `git clone`
