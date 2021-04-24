@@ -21,13 +21,18 @@ cd mal-tier-list-bbcode-gen
 
 ### Tiers
 Each tier is represented by one sheet of the `tiers.ods` spreadsheet.
+By default there are 7 tiers named 'tier S', 'tier A', 'tier B' ..., 'tier F'.
+I provided an example tier in the sheet named `EXAMPLE TIER`.
+
+### Headers
+Each tier has a header.
+The headers are images.
+I provided a default header for each tier in `tiers.ods` (color-coded in the typical tier list style).
+
+The example headers and the `.xcf` file (GIMP format) that was used to generate them can be found in `example-headers`.
 
 ### Entries
 Each entry consists of a link to MAL and a link to an image.
-
-### Headers
-Each tier has a header that's also an image.
-Some example headers and the `.xcf` file (GIMP format) that was used to generate them can be found in `example-headers`.
 
 ### Image source
 The images need to be hosted somewhere.
@@ -53,7 +58,7 @@ Curretnly there are two settings:
 ## Usage
 
 You can edit the `tiers.ods` file directly or create a copy of it.
-I will show an example for `tiers.ods` here, but if your file is named differently then just replace `tiers` with your file's name.
+I will show an example for `tiers.ods` here, but if your file is named differently replace `tiers` with your file's name.
 
 1. Fill out the `tiers.ods` file
 2. Run
