@@ -1,6 +1,9 @@
 import setuptools
 
 
+with open('README.md', 'r') as f:
+    long_description = f.read()
+
 entry_points = {
     'console_scripts': [
         'mal-tier-list-bbcode-gen = mal_tier_list_bbcode_gen.cli:main',
@@ -12,9 +15,10 @@ setuptools.setup(
     version='2021.4.24',
     packages=setuptools.find_packages(),
     include_package_data=True,
-    description='BBCode generator for MyAnimeList blog posts',
+    description='BBCode generator for MyAnimeList tier lists',
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     url='https://github.com/juliamarc/mal-tier-list-bbcode-gen',
-    # TODO look up in documentation
     install_requires=['click', 'bbcode', 'ezodf', 'lxml'],
     entry_points=entry_points,
     classifiers=[
