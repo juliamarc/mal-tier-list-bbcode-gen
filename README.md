@@ -66,7 +66,7 @@ I will show an example for `tiers.ods` here, but if your file is named different
 
 1. Fill out `tiers.ods`
 2. Run
-    - `mal-tier-list-bbcode-gen tiers.ods` if you installed with pip
+    - `mal-tier-list-bbcode-gen tiers.ods` if you installed with pip, or
     - `python -m mal_tier_list_bbcode_gen tiers.ods` if you used `git clone`
 
 The BBCode can be found in `tiers.bbcode.txt` and a preview of it is in `preview.html`.
