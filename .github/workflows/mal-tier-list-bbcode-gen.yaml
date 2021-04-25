@@ -32,6 +32,24 @@ jobs:
           pip install tox
           tox
 
+      - name: Get coverage percent
+        run: |
+          python -c "from lxml.etree import parse, HTMLParser;\
+          from sys import stdin; print('PC_COV=' + '\n'.join(\
+          parse(stdin, parser=HTMLParser()).xpath(\
+          '//span[@class=\'pc_cov\']/text()[1]')))" < htmlcov/index.html >> $GITHUB_ENV
+
+      - name: Create coverage badge
+        if: matrix.python == '3.9'
+        uses: schneegans/dynamic-badges-action@v1.0.0
+        with:
+          auth: ${{ secrets.GIST_SECRET }}
+          gistID: 0ef08769e202a6eb28e1a4fe176f7eb6
+          filename: coverage-badge.json
+          label: coverage
+          message: ${{ env.PC_COV }}
+          color: blue
+
   publish:
     name: Publish
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
