@@ -33,6 +33,7 @@ jobs:
           tox
 
       - name: Get coverage percent
+        if: matrix.python == '3.9'
         run: |
           python -c "from lxml.etree import parse, HTMLParser;\
           from sys import stdin; print('PC_COV=' + '\n'.join(\
