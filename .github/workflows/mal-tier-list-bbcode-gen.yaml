@@ -92,4 +92,4 @@ jobs:
           filename: version-badge.json
           label: version
           message: ${{ env.MTLBG_VERSION }}
-          color: 9cf
+          color: orange
