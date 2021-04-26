@@ -120,7 +120,7 @@ class SpreadsheetParser:
             print(f"WARNING Incomplete entry in sheet '{tier_name}' at row "
                   f"{row_number}")
 
-            return None
+        return None
 
     def _parse_entries(self, sheet, tier_name):
         entries = []

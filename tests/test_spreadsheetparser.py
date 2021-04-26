@@ -2,8 +2,11 @@ import os
 
 import pytest
 
+from mal_tier_list_bbcode_gen.entry import Entry
+from mal_tier_list_bbcode_gen.image import Image
 from mal_tier_list_bbcode_gen.spreadsheetparser import (
-    SpreadsheetParser, EntriesPerRowMissingError, EntriesPerRowNotANumberError)
+    SpreadsheetParser, EntriesPerRowMissingError, EntriesPerRowNotANumberError,
+    HeaderIncompleteError)
 
 
 @pytest.fixture
@@ -22,6 +25,12 @@ def perfect_ods_file_name():
 def settings_ods_file_name():
     return os.path.join(os.path.dirname(os.path.realpath(__file__)),
                         'test_tiers_settings.ods')
+
+
+@pytest.fixture
+def incomplete_ods_file_name():
+    return os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                        'test_tiers_incomplete.ods')
 
 
 @pytest.fixture
@@ -167,3 +176,111 @@ def test_parse_settings(mocker, perfect_ods_file_name):
     settings = ssp._parse_settings(ssp)
 
     assert settings == expected_settings
+
+
+def test_parse_header_yes_full_entry(perfect_ods_file_name):
+    ssp = SpreadsheetParser(perfect_ods_file_name)
+    tier_name = 'tier S'
+    header = ssp._parse_header(ssp.spreadsheet.sheets[tier_name], tier_name)
+
+    assert isinstance(header, Image)
+    assert header.image_source == 'Google Drive'
+    assert header.image_url == ('https://drive.google.com/uc?id='
+                                '1V3vK8HA4hrdby7VHkQwrb6KvlMcXEPTA')
+
+
+@pytest.mark.parametrize(
+    "tier_name",
+    [
+        pytest.param('tier A'),
+        pytest.param('tier B'),
+        pytest.param('tier C'),
+    ],
+)
+def test_parse_header_yes_incomplete_entry(
+        incomplete_ods_file_name, tier_name):
+    ssp = SpreadsheetParser(incomplete_ods_file_name)
+    with pytest.raises(HeaderIncompleteError):
+        ssp._parse_header(ssp.spreadsheet.sheets[tier_name], tier_name)
+
+
+def test_parse_header_no(incomplete_ods_file_name):
+    ssp = SpreadsheetParser(incomplete_ods_file_name)
+    tier_name = 'tier S'
+    header = ssp._parse_header(ssp.spreadsheet.sheets[tier_name], tier_name)
+
+    assert header is None
+
+
+def test_parse_entry_complete_entry(perfect_ods_file_name):
+    ssp = SpreadsheetParser(perfect_ods_file_name)
+    tier_name = 'tier S'
+    entry = ssp._parse_entry(
+        ssp.spreadsheet.sheets[tier_name].row(4), 4, tier_name)
+
+    assert isinstance(entry, Entry)
+    assert entry.mal_url == 'https://myanimelist.net/character/142314/Zeke'
+    assert entry.name == 'Zeke'
+    assert entry.image_source == 'Google Drive'
+    assert entry.image_url == ('https://drive.google.com/uc?id='
+                               '1olKc6TBJ1kPJa7cKWVp7dNZFwHb_0k8Z')
+
+
+@pytest.mark.parametrize(
+    "row_number",
+    [
+        pytest.param(5),
+        pytest.param(6),
+        pytest.param(7),
+        pytest.param(8),
+        pytest.param(9),
+        pytest.param(10),
+        pytest.param(15),
+    ],
+)
+def test_parse_entry_incomplete_entry(incomplete_ods_file_name, row_number):
+    ssp = SpreadsheetParser(incomplete_ods_file_name)
+    tier_name = 'tier A'
+    entry = ssp._parse_entry(
+        ssp.spreadsheet.sheets[tier_name].row(row_number), row_number,
+        tier_name)
+
+    assert entry is None
+
+
+def test_parse_entries_all_complete(perfect_ods_file_name):
+    ssp = SpreadsheetParser(perfect_ods_file_name)
+    tier_name = 'tier S'
+    entries = ssp._parse_entries(ssp.spreadsheet.sheets[tier_name], tier_name)
+
+    assert len(entries) == 2
+    assert all([isinstance(e, Entry) for e in entries])
+
+
+def test_parse_entries_some_complete(incomplete_ods_file_name):
+    ssp = SpreadsheetParser(incomplete_ods_file_name)
+    tier_name = 'tier A'
+    entries = ssp._parse_entries(ssp.spreadsheet.sheets[tier_name], tier_name)
+
+    assert len(entries) == 2
+    assert all([isinstance(e, Entry) for e in entries])
+
+
+def test_parse_tier(perfect_ods_file_name):
+    ssp = SpreadsheetParser(perfect_ods_file_name)
+    tier_name = 'tier B'
+    tier = ssp._parse_tier(tier_name)
+
+    assert len(tier) == 2
+    assert 'header' in tier
+    assert 'entries' in tier
+    assert isinstance(tier['header'], Image) or tier['header'] is None
+    assert all([isinstance(e, Entry) for e in tier['entries']])
+
+
+def test_parse_tiers(perfect_ods_file_name):
+    ssp = SpreadsheetParser(perfect_ods_file_name)
+    ssp.parse_tiers()
+
+    assert set(ssp.settings['tier_names']) == set(ssp.tiers.keys())
+    assert all(['header' in t and 'entries' in t for t in ssp.tiers.values()])
