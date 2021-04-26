@@ -7,31 +7,38 @@ class BBCodeGenerator:
         self.tiers = tiers
         self.bbcode = None
 
+    def _generate_bbcode_for_header(self, header):
+        return f"{header.get_bbcode()}\n" if header is not None else ''
+
+    def _calculate_newline_after(self, no_entries):
+        entries_per_row = self.settings['entries_per_row']
+        if entries_per_row > 0:
+            newline_after = range(
+                entries_per_row-1, no_entries-1, entries_per_row)
+        else:
+            newline_after = []
+
+        return ['\n' if i in newline_after else '' for i in range(no_entries)]
+
+    def _generate_bbcode_for_tier(self, tier):
+        bbcode = self._generate_bbcode_for_header(tier['header'])
+        no_entries = len(tier['entries'])
+        newline_after = self._calculate_newline_after(no_entries)
+        end = '\n' if no_entries > 0 else ''
+
+        for i, entry in enumerate(tier['entries']):
+            bbcode += f"{entry.get_bbcode()}{newline_after[i]}"
+
+        return f"{bbcode}{end}"
+
     def generate_bbcode(self):
         self.bbcode = ''
 
-        for _, tier in self.tiers.items():
-            no_entries = len(tier['entries'])
-
-            if tier['header']:
-                self.bbcode += tier['header'].get_bbcode() + '\n'
-
-            per_row = self.settings['entries_per_row']
-            force_tile = True if per_row > 0 else False
-            if force_tile:
-                newline_after = range(
-                    per_row-1, no_entries-1, per_row)
-
-            for i, entry in enumerate(tier['entries']):
-                self.bbcode += entry.get_bbcode()
-                if force_tile and i in newline_after:
-                    self.bbcode += '\n'
-
-            if no_entries > 0:
-                self.bbcode += '\n'
+        for tier in self.tiers.values():
+            self.bbcode += self._generate_bbcode_for_tier(tier)
 
     def write_bbcode_to_file(self, file_name):  # pragma: no cover
-        with open(file_name, "w") as f:
+        with open(file_name, 'w') as f:
             f.write(self.bbcode)
 
         print(f"BBCode saved to {file_name}")
@@ -44,7 +51,7 @@ class BBCodeGenerator:
 
     def write_html_preview_to_file(self, file_name):  # pragma: no cover
         html = self._generate_html_preview()
-        with open(file_name, "w") as f:
+        with open(file_name, 'w') as f:
             f.write(html)
 
-        print(f'HTML preview saved to {file_name}')
+        print(f"HTML preview saved to {file_name}")
