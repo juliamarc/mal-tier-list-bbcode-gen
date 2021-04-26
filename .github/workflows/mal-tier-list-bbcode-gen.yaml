@@ -1,4 +1,4 @@
-name: mal-tier-list-bbcode-gen
+name: CI/CD
 
 on: [push, pull_request]
 
@@ -33,7 +33,7 @@ jobs:
           tox
 
       - name: Get coverage percent
-        if: matrix.python == '3.9'
+        if: matrix.python == '3.9' && github.ref == 'refs/heads/main'
         run: |
           python -c "from lxml.etree import parse, HTMLParser;\
           from sys import stdin; print('PC_COV=' + '\n'.join(\
@@ -41,7 +41,7 @@ jobs:
           '//span[@class=\'pc_cov\']/text()[1]')))" < htmlcov/index.html >> $GITHUB_ENV
 
       - name: Create coverage badge
-        if: matrix.python == '3.9'
+        if: matrix.python == '3.9' && github.ref == 'refs/heads/main'
         uses: schneegans/dynamic-badges-action@v1.0.0
         with:
           auth: ${{ secrets.GIST_SECRET }}
@@ -79,3 +79,17 @@ jobs:
           user: __token__
           password: ${{ secrets.TEST_PYPI_API_TOKEN }}
           repository_url: https://test.pypi.org/legacy/
+
+      - name: Get version
+        run: |
+          echo MTLBG_VERSION=$(grep version= setup.py | cut -d '=' -f 2 | tr -d \'\,) >> $GITHUB_ENV
+
+      - name: Create version badge
+        uses: schneegans/dynamic-badges-action@v1.0.0
+        with:
+          auth: ${{ secrets.GIST_SECRET }}
+          gistID: 0ef08769e202a6eb28e1a4fe176f7eb6
+          filename: version-badge.json
+          label: version
+          message: ${{ env.MTLBG_VERSION }}
+          color: 9cf
