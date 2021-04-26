@@ -12,6 +12,7 @@ class Image:
     def __init__(self, image_source, image_url):
         self.image_source = image_source
         self.image_url = image_url
+
         self._process_image_url()
 
     def _process_image_url(self):

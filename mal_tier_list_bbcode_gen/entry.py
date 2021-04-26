@@ -7,6 +7,7 @@ class Entry(Image):
     def __init__(self, mal_url, image_source, image_url):
         super(Entry, self).__init__(image_source, image_url)
         self.mal_url = mal_url
+
         self.name = unquote(self.mal_url.split("/")[-1]).replace("_", " ")
 
     def __repr__(self):

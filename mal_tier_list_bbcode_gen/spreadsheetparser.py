@@ -34,7 +34,9 @@ class SpreadsheetParser:
     def __init__(self, file_name):
         self.file_name = file_name
         self.spreadsheet = ezodf.opendoc(file_name)
+
         self.settings = self._parse_settings()
+
         self.tiers = {}
 
     def _get_settings_sheet(self):

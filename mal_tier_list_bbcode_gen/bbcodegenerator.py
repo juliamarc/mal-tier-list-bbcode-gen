@@ -5,6 +5,7 @@ class BBCodeGenerator:
     def __init__(self, settings, tiers):
         self.settings = settings
         self.tiers = tiers
+
         self.bbcode = None
 
     def _generate_bbcode_for_header(self, header):
