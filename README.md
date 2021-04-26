@@ -1,6 +1,7 @@
 # MAL Tier List BBCode Generator
 
 ![](https://github.com/juliamarc/mal-tier-list-bbcode-gen/actions/workflows/mal-tier-list-bbcode-gen.yaml/badge.svg)
+![](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/juliamarc/0ef08769e202a6eb28e1a4fe176f7eb6/raw/version-badge.json)
 ![](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/juliamarc/0ef08769e202a6eb28e1a4fe176f7eb6/raw/coverage-badge.json)
 
 `mal-tier-list-bbcode-gen` is a Python package that generates BBCode for
