@@ -107,11 +107,11 @@ class SpreadsheetParser:
             if all(header_entry):
                 header = Image(*header_entry[1:])
                 return header
-            else:
-                raise HeaderIncompleteError(
-                    f"Incomplete header entry in sheet '{tier_name}'.")
-        else:
-            return None
+
+            raise HeaderIncompleteError(
+                f"Incomplete header entry in sheet '{tier_name}'.")
+
+        return None
 
     def _parse_entry(self, sheet_row, row_number, tier_name):
         entry = [cell.value for cell in sheet_row[1:4]]

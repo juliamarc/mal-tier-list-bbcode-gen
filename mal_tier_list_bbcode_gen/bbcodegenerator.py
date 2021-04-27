@@ -13,24 +13,26 @@ class BBCodeGenerator:
 
     def _calculate_newline_after(self, no_entries):
         entries_per_row = self.settings['entries_per_row']
+
+        newline_after = []
         if entries_per_row > 0:
             newline_after = range(
                 entries_per_row-1, no_entries-1, entries_per_row)
-        else:
-            newline_after = []
 
-        return ['\n' if i in newline_after else '' for i in range(no_entries)]
+        ends = ['\n' if i in newline_after else '' for i in range(
+            no_entries-1)]
+        ends.append('\n')
+
+        return ends
 
     def _generate_bbcode_for_tier(self, tier):
         bbcode = self._generate_bbcode_for_header(tier['header'])
-        no_entries = len(tier['entries'])
-        newline_after = self._calculate_newline_after(no_entries)
-        end = '\n' if no_entries > 0 else ''
+        newline_after = self._calculate_newline_after(len(tier['entries']))
 
-        for i, entry in enumerate(tier['entries']):
-            bbcode += f"{entry.get_bbcode()}{newline_after[i]}"
+        bbcode += ''.join(f"{e.get_bbcode()}{n}" for e, n in zip(
+            tier['entries'], newline_after))
 
-        return f"{bbcode}{end}"
+        return bbcode
 
     def generate_bbcode(self):
         self.bbcode = ''
