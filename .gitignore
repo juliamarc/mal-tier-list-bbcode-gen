@@ -2,6 +2,7 @@ __pycache__
 venv
 .~lock.*
 *.html
+!test_preview.html
 *.bbcode.txt
 *.egg-info
 .coverage
