@@ -19,13 +19,18 @@ class SpreadsheetParser:
     ENTRY_LIST_ROW_START = 5
     ENTRY_LIST_ROW_END = 54
 
-    def __init__(self, file_name):
-        self.file_name = file_name
-        self.spreadsheet = ezodf.opendoc(file_name)
+    def __init__(self, ods_file_path):
+        self.ods_file_path = ods_file_path
+        self.spreadsheet = self._read_ods_file(ods_file_path)
 
         self.settings = self._parse_settings()
-
         self.tiers = {}
+
+    def _read_ods_file(self, ods_file_path):
+        try:
+            return ezodf.opendoc(ods_file_path)
+        except KeyError:
+            raise FileNotFoundError(f"Path '{ods_file_path}' does not exist.")
 
     def _get_settings_sheet(self):
         try:

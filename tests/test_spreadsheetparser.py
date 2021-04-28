@@ -51,6 +51,27 @@ def settings_ssp_with_mocked_parse_settings(mocker, settings_ods_file_name):
     return SpreadsheetParser(settings_ods_file_name)
 
 
+def test_read_ods_file_exists(perfect_ssp_with_mocked_parse_settings):
+    ssp = perfect_ssp_with_mocked_parse_settings
+
+    assert ssp.spreadsheet is not None
+
+
+@pytest.mark.parametrize(
+    "ods_file_path",
+    [
+        pytest.param('this_file_does_not_exist_for_sure.ods'),
+        pytest.param('not_even_an_ods_file.txt'),
+        pytest.param('not_even_an_ods_file.html'),
+        pytest.param('not_even_an_ods_file.pdf'),
+        pytest.param('not_even_an_ods_file'),
+    ],
+)
+def test_read_ods_file_not_exists(ods_file_path):
+    with pytest.raises(FileNotFoundError):
+        SpreadsheetParser(ods_file_path)
+
+
 def test_get_settings_sheet_exists(perfect_ssp_with_mocked_parse_settings):
     ssp = perfect_ssp_with_mocked_parse_settings
     settings_sheet = ssp._get_settings_sheet()
