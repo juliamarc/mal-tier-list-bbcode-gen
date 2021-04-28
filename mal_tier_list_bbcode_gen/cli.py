@@ -6,20 +6,15 @@ import click
 
 import mal_tier_list_bbcode_gen.utils as utils
 
-from mal_tier_list_bbcode_gen.bbcodegenerator import BBCodeGenerator
-from mal_tier_list_bbcode_gen.spreadsheetparser import SpreadsheetParser
+from mal_tier_list_bbcode_gen.tierlistgenerator import TierListGenerator
 
 
 @click.command()
 @click.argument('ods_file_path', type=click.Path(exists=True))
 def main(ods_file_path):
     with warnings.catch_warnings(record=True) as w:
-        parser = SpreadsheetParser(ods_file_path)
-        parser.parse_tiers()
-
-        generator = BBCodeGenerator(parser.settings, parser.tiers)
-        generator.generate_bbcode()
-        generator.generate_html()
+        generator = TierListGenerator(ods_file_path)
+        generator.generate()
 
         bbcode_output_path = splitext(basename(ods_file_path))[0] + '.txt'
         html_output_path = splitext(basename(ods_file_path))[0] + '.html'
