@@ -12,7 +12,7 @@ from mal_tier_list_bbcode_gen.spreadsheetparser import SpreadsheetParser
 @pytest.fixture
 def epmty_ods_file_name():
     return os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                        'test_tiers_epmty.ods')
+                        'test_tiers_empty.ods')
 
 
 @pytest.fixture
