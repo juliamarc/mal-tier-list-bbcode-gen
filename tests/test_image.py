@@ -37,7 +37,8 @@ def test_source_google_no_file_id():
 
 
 def test_source_not_valid():
-    with pytest.raises(KeyError, match=r".*is not a valid image source.*"):
+    with pytest.raises(exceptions.InvalidImageSourceError,
+                       match=r".*is not a valid image source.*"):
         Image('not valid', 'example.com/test.png')
 
 

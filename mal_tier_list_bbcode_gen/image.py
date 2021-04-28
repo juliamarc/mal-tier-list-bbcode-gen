@@ -22,10 +22,12 @@ class Image:
                 self.image_url = f'https://drive.google.com/uc?id={file_id}'
             else:
                 raise exceptions.GoogleDriveSourceError(
-                    f"Couldn't identify file ID in '{self.image_url}'.")
+                    f"Couldn't identify file ID in the following Google Drive "
+                    f"URL: '{self.image_url}'.")
         else:
-            raise KeyError(f"'{self.image_source}' is not a valid image "
-                           "source. Choose from {self.SOURCES}.")
+            raise exceptions.InvalidImageSourceError(
+                f"'{self.image_source}' is not a valid image source. Choose "
+                f"from {self.SOURCES}.")
 
     def get_bbcode(self):
         return f'[img]{self.image_url}[/img]'
