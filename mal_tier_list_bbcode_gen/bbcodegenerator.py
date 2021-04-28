@@ -44,9 +44,3 @@ class BBCodeGenerator:
         parser.add_simple_formatter('img', '<img src=%(value)s>')
 
         self.html = parser.format(self.bbcode)
-
-    def write_to_file(self, filename, text, message):  # pragma: no cover
-        with open(filename, 'w') as f:
-            f.write(text)
-
-        print(message)
