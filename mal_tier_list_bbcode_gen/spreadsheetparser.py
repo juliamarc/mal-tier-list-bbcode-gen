@@ -52,10 +52,11 @@ class SpreadsheetParser:
         sheets_names = list(self.spreadsheet.sheets.names())
         missing = set(tier_names) - set(sheets_names)
         if missing:
-            warnings.warn(f"The following tiers were specified in SETTINGS "
-                          f"but do not match any sheet in the spreadsheet: "
-                          f"{', '.join(missing)}. "
-                          f"Sheets in spreadsheet: {', '.join(sheets_names)}.")
+            warnings.warn(
+                f"The following tiers were specified in the "
+                f"'{self.SETTINGS_SHEET_NAME}' sheet but do not match any "
+                f"sheet in the spreadsheet: {', '.join(missing)}. Sheets in "
+                f"spreadsheet: {', '.join(sheets_names)}.")
 
         return missing
 
@@ -71,13 +72,14 @@ class SpreadsheetParser:
             if entries_per_row >= 0:
                 return entries_per_row
             else:
-                warnings.warn("'Entries per row' setting set to less than 0."
-                              "Defaulting to 0 (free flow tiling).")
+                warnings.warn(
+                    "'Entries per row' setting set to less than 0. Defaulting "
+                    " to 0 (free flow tiling).")
                 return 0
         else:
             raise exceptions.EntriesPerRowNotANumberError(
                 f"'Entries per row' setting from sheet "
-                f"{self.SETTINGS_SHEET_NAME} should be a number.")
+                f"'{self.SETTINGS_SHEET_NAME}' should be a number.")
 
     def _parse_settings(self):
         settings = {}
@@ -109,8 +111,9 @@ class SpreadsheetParser:
         if all(entry):
             return Entry(*entry)
         elif any(entry):
-            warnings.warn(f"Incomplete entry in sheet '{tier_name}' at sheet "
-                          f"row {row_number+1}.")
+            warnings.warn(
+                f"Incomplete entry in sheet '{tier_name}' at sheet row "
+                f"{row_number+1}.")
 
         return None
 
