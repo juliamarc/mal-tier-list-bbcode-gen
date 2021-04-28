@@ -12,7 +12,7 @@ entry_points = {
 
 setuptools.setup(
     name='mal-tier-list-bbcode-gen',
-    version='2021.4.27',
+    version='2021.4.28',
     packages=setuptools.find_packages(),
     include_package_data=True,
     description='BBCode generator for MyAnimeList tier lists',
