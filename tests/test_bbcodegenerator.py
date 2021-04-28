@@ -41,7 +41,7 @@ def test_generate_bbcode_for_header(header, expected_bbcode):
         pytest.param(10, 5, ['', '', '', '', '\n']),
     ],
 )
-def test__calculate_newline_after(entries_per_row, no_entries, expected_ends):
+def test_calculate_newline_after(entries_per_row, no_entries, expected_ends):
     bbcg = BBCodeGenerator({'entries_per_row': entries_per_row}, {})
     ends = bbcg._calculate_newline_after(no_entries)
 
@@ -163,7 +163,7 @@ def test_generate_bbcode():
     assert bbcg.bbcode == expected_bbcode
 
 
-def test_generate_html_preview():
+def test_generate_html():
     bbcg = BBCodeGenerator(
         {'entries_per_row': 2}, {
             'tier S': {
@@ -204,6 +204,6 @@ def test_generate_html_preview():
         expected_html = f.read()
 
     bbcg.generate_bbcode()
-    html = bbcg._generate_html_preview()
+    bbcg.generate_html()
 
-    assert html == expected_html
+    assert bbcg.html == expected_html

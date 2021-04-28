@@ -7,6 +7,7 @@ class BBCodeGenerator:
         self.tiers = tiers
 
         self.bbcode = None
+        self.html = None
 
     def _generate_bbcode_for_header(self, header):
         return f"{header.get_bbcode()}\n" if header is not None else ''
@@ -35,26 +36,17 @@ class BBCodeGenerator:
         return bbcode
 
     def generate_bbcode(self):
-        self.bbcode = ''
+        self.bbcode = ''.join(map(self._generate_bbcode_for_tier,
+                                  self.tiers.values()))
 
-        for tier in self.tiers.values():
-            self.bbcode += self._generate_bbcode_for_tier(tier)
-
-    def write_bbcode_to_file(self, file_name):  # pragma: no cover
-        with open(file_name, 'w') as f:
-            f.write(self.bbcode)
-
-        print(f"BBCode saved to {file_name}")
-
-    def _generate_html_preview(self):
+    def generate_html(self):
         parser = bbcode.Parser(replace_links=False)
         parser.add_simple_formatter('img', '<img src=%(value)s>')
 
-        return parser.format(self.bbcode)
+        self.html = parser.format(self.bbcode)
 
-    def write_html_preview_to_file(self, file_name):  # pragma: no cover
-        html = self._generate_html_preview()
-        with open(file_name, 'w') as f:
-            f.write(html)
+    def write_to_file(self, filename, text, message):  # pragma: no cover
+        with open(filename, 'w') as f:
+            f.write(text)
 
-        print(f"HTML preview saved to {file_name}")
+        print(message)

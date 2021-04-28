@@ -7,20 +7,19 @@ from mal_tier_list_bbcode_gen.spreadsheetparser import SpreadsheetParser
 
 
 @click.command()
-@click.option('--output_path', default=None, type=str,
-              help='Path to file where the BBCode will be saved. Default '
-              'path is generated based on the input file name like this: '
-              '<name>.ods -> <name>.bbcode.txt')
 @click.argument('ods_file_path', type=click.Path(exists=True))
-def main(output_path, ods_file_path):
+def main(ods_file_path):
     parser = SpreadsheetParser(ods_file_path)
     parser.parse_tiers()
 
     generator = BBCodeGenerator(parser.settings, parser.tiers)
     generator.generate_bbcode()
+    generator.generate_html()
 
-    if not output_path:
-        output_path = splitext(basename(ods_file_path))[0] + '.bbcode.txt'
+    bbcode_output_path = splitext(basename(ods_file_path))[0] + '.txt'
+    html_output_path = splitext(basename(ods_file_path))[0] + '.html'
 
-    generator.write_bbcode_to_file(output_path)
-    generator.write_html_preview_to_file('preview.html')
+    generator.write_to_file(bbcode_output_path, generator.bbcode,
+                            f"BBCode saved to {bbcode_output_path}")
+    generator.write_to_file(html_output_path, generator.html,
+                            f"HTML preview saved to {html_output_path}")
