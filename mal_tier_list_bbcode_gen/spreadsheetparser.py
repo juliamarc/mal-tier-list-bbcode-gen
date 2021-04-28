@@ -31,7 +31,7 @@ class SpreadsheetParser:
         try:
             return self.spreadsheet.sheets[self.SETTINGS_SHEET_NAME]
         except KeyError:
-            raise KeyError(
+            raise exceptions.SettingsSheetMissingError(
                 f"Sheet {self.SETTINGS_SHEET_NAME} not found in spreadsheet.")
 
     def _parse_tier_order(self, sheet):

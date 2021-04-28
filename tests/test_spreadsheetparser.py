@@ -60,7 +60,8 @@ def test_get_settings_sheet_exists(perfect_ssp_with_mocked_parse_settings):
 
 def test_get_settings_sheet_not_exists(empty_ssp_with_mocked_parse_settings):
     ssp = empty_ssp_with_mocked_parse_settings
-    with pytest.raises(KeyError, match=r".*not found in spreadsheet*"):
+    with pytest.raises(exceptions.SettingsSheetMissingError,
+                       match=r".*not found in spreadsheet*"):
         ssp._get_settings_sheet()
 
 
