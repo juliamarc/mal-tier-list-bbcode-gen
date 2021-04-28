@@ -1,9 +1,17 @@
+# python stuff
 __pycache__
 venv
+*.egg-info
+
+# input/output related
 .~lock.*
+
 *.html
 !test_preview.html
-*.bbcode.txt
-*.egg-info
+
+*.txt
+!requirements.txt
+
+# tests
 .coverage
 .tox
