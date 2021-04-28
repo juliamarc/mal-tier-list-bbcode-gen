@@ -1,26 +1,14 @@
+import warnings
+
 from math import isclose
 
 import ezodf
 
+import mal_tier_list_bbcode_gen.exceptions as exceptions
 import mal_tier_list_bbcode_gen.utils as utils
 
 from mal_tier_list_bbcode_gen.entry import Entry
 from mal_tier_list_bbcode_gen.image import Image
-
-
-class EntriesPerRowMissingError(Exception):  # pragma: no cover
-    def __init__(self, message):
-        super().__init__(message)
-
-
-class EntriesPerRowNotANumberError(Exception):  # pragma: no cover
-    def __init__(self, message):
-        super().__init__(message)
-
-
-class HeaderIncompleteError(Exception):  # pragma: no cover
-    def __init__(self, message):
-        super().__init__(message)
 
 
 class SpreadsheetParser:
@@ -61,18 +49,20 @@ class SpreadsheetParser:
         return tier_names
 
     def _check_for_missing_tier_sheets(self, tier_names):
-        missing = set(tier_names) - set(self.spreadsheet.sheets.names())
+        sheets_names = list(self.spreadsheet.sheets.names())
+        missing = set(tier_names) - set(sheets_names)
         if missing:
-            print(f"WARNING the following tiers were specified in SETTINGS "
-                  f"but do not match any sheet in the spreadsheet: "
-                  f"{', '.join(missing)}")
+            warnings.warn(f"The following tiers were specified in SETTINGS "
+                          f"but do not match any sheet in the spreadsheet: "
+                          f"{', '.join(missing)}. "
+                          f"Sheets in spreadsheet: {', '.join(sheets_names)}.")
 
         return missing
 
     def _get_entries_per_row_setting(self, sheet):
         entries_per_row = sheet[self.ENTRIES_PER_ROW_ADDRESS].value
         if entries_per_row is None:
-            raise EntriesPerRowMissingError(
+            raise exceptions.EntriesPerRowMissingError(
                 f"'Entries per row' setting missing from settings sheet "
                 f"{self.SETTINGS_SHEET_NAME}. Should be in cell "
                 f"{self.ENTRIES_PER_ROW_ADDRESS}")
@@ -81,11 +71,11 @@ class SpreadsheetParser:
             if entries_per_row >= 0:
                 return entries_per_row
             else:
-                print("WARNING 'Entries per row' setting set to less than 0."
-                      "Defaulting to 0 (free flow tiling).")
+                warnings.warn("'Entries per row' setting set to less than 0."
+                              "Defaulting to 0 (free flow tiling).")
                 return 0
         else:
-            raise EntriesPerRowNotANumberError(
+            raise exceptions.EntriesPerRowNotANumberError(
                 f"'Entries per row' setting from sheet "
                 f"{self.SETTINGS_SHEET_NAME} should be a number.")
 
@@ -108,7 +98,7 @@ class SpreadsheetParser:
                 header = Image(*header_entry[1:])
                 return header
 
-            raise HeaderIncompleteError(
+            raise exceptions.HeaderIncompleteError(
                 f"Incomplete header entry in sheet '{tier_name}'.")
 
         return None
@@ -119,8 +109,8 @@ class SpreadsheetParser:
         if all(entry):
             return Entry(*entry)
         elif any(entry):
-            print(f"WARNING Incomplete entry in sheet '{tier_name}' at row "
-                  f"{row_number}")
+            warnings.warn(f"Incomplete entry in sheet '{tier_name}' at sheet "
+                          f"row {row_number+1}.")
 
         return None
 

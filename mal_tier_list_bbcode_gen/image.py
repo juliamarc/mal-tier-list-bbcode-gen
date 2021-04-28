@@ -1,9 +1,6 @@
 import re
 
-
-class GoogleDriveSourceError(Exception):  # pragma: no cover
-    def __init__(self, message):
-        super().__init__(message)
+import mal_tier_list_bbcode_gen.exceptions as exceptions
 
 
 class Image:
@@ -24,7 +21,7 @@ class Image:
                 file_id = file_id_search.group(1)
                 self.image_url = f'https://drive.google.com/uc?id={file_id}'
             else:
-                raise GoogleDriveSourceError(
+                raise exceptions.GoogleDriveSourceError(
                     f"Couldn't identify file ID in '{self.image_url}'.")
         else:
             raise KeyError(f"'{self.image_source}' is not a valid image "

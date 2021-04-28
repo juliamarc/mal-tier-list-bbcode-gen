@@ -1,6 +1,7 @@
 import pytest
 
-from mal_tier_list_bbcode_gen.image import Image, GoogleDriveSourceError
+import mal_tier_list_bbcode_gen.exceptions as exceptions
+from mal_tier_list_bbcode_gen.image import Image
 
 
 def test_source_direct_url():
@@ -31,7 +32,7 @@ def test_source_google_drive_share_link():
 
 def test_source_google_no_file_id():
     image_url = ('https://drive.google.com/file/d/view?usp=sharing')
-    with pytest.raises(GoogleDriveSourceError):
+    with pytest.raises(exceptions.GoogleDriveSourceError):
         Image('Google Drive', image_url)
 
 

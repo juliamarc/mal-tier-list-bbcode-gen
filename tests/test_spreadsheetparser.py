@@ -2,11 +2,11 @@ import os
 
 import pytest
 
+import mal_tier_list_bbcode_gen.exceptions as exceptions
+
 from mal_tier_list_bbcode_gen.entry import Entry
 from mal_tier_list_bbcode_gen.image import Image
-from mal_tier_list_bbcode_gen.spreadsheetparser import (
-    SpreadsheetParser, EntriesPerRowMissingError, EntriesPerRowNotANumberError,
-    HeaderIncompleteError)
+from mal_tier_list_bbcode_gen.spreadsheetparser import SpreadsheetParser
 
 
 @pytest.fixture
@@ -128,7 +128,7 @@ def test_missing_tier_sheets(
 def test_get_entries_per_row_setting_not_exists(
         settings_ssp_with_mocked_parse_settings):
     ssp = settings_ssp_with_mocked_parse_settings
-    with pytest.raises(EntriesPerRowMissingError):
+    with pytest.raises(exceptions.EntriesPerRowMissingError):
         ssp._get_entries_per_row_setting(ssp.spreadsheet.sheets['S6'])
 
 
@@ -159,7 +159,7 @@ def test_get_entries_per_row_setting_number(
 def test_get_entries_per_row_setting_text(
         settings_ssp_with_mocked_parse_settings):
     ssp = settings_ssp_with_mocked_parse_settings
-    with pytest.raises(EntriesPerRowNotANumberError):
+    with pytest.raises(exceptions.EntriesPerRowNotANumberError):
         ssp._get_entries_per_row_setting(ssp.spreadsheet.sheets['S4'])
 
 
@@ -200,7 +200,7 @@ def test_parse_header_yes_full_entry(perfect_ods_file_name):
 def test_parse_header_yes_incomplete_entry(
         incomplete_ods_file_name, tier_name):
     ssp = SpreadsheetParser(incomplete_ods_file_name)
-    with pytest.raises(HeaderIncompleteError):
+    with pytest.raises(exceptions.HeaderIncompleteError):
         ssp._parse_header(ssp.spreadsheet.sheets[tier_name], tier_name)
 
 
